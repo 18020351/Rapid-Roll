@@ -7,7 +7,7 @@ public class PlayController : MonoBehaviour
     private Rigidbody2D playerRb;
     private float horizontalInput;
     public float speed = 100f;
-    public float timeWait = 2f;
+    public float timeWait = 1f;
     private void Awake()
     {
         playerRb = GetComponent<Rigidbody2D>();
@@ -16,6 +16,7 @@ public class PlayController : MonoBehaviour
     {
         horizontalInput = Input.GetAxis("Horizontal");
         playerRb.AddForce(Vector2.right * horizontalInput * speed * Time.deltaTime, ForceMode2D.Impulse);
+        GameManager.instanceGameManager.addSocre(playerRb);
     }
     private void Start()
     {
@@ -25,7 +26,6 @@ public class PlayController : MonoBehaviour
     {
         if (other.gameObject.tag == "Obstacle" || other.gameObject.tag == "Bottom" || other.gameObject.tag == "Bound")
         {
-
             this.gameObject.SetActive(false);
             GameManager.instanceGameManager.Die();
             GameManager.instanceGameManager.CallBackDie(WaitRevival(timeWait));
@@ -33,12 +33,18 @@ public class PlayController : MonoBehaviour
         else if (other.gameObject.CompareTag("Lives"))
         {
             GameManager.instanceGameManager.AddLives();
+            Destroy(other.gameObject);
         }
     }
     private IEnumerator WaitRevival(float timeWait)
     {
         yield return new WaitForSeconds(timeWait);
         this.gameObject.SetActive(true);
+        this.transform.position = Vector3.zero;
+    }
+    public void ReSpawn()
+    {
+        gameObject.SetActive(true);
         this.transform.position = Vector3.zero;
     }
 }

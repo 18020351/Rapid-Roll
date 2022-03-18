@@ -9,8 +9,13 @@ public class GameManager : MonoBehaviour
     public Text textScore;
     public Text textLives;
     public Text textGameOver;
+    public Button btnRestart;
+    [SerializeField]
+    private PlayController _player;
     public int score = 0;
     public int lives = 5;
+    public bool isCheck;
+
     private void Awake()
     {
         instanceGameManager = this;
@@ -38,15 +43,25 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(action);
         }
-
     }
     public void GameOver()
     {
         textGameOver.gameObject.SetActive(true);
+        btnRestart.gameObject.SetActive(true);
+        isCheck = false;
     }
     public void Restart()
     {
         lives = 5;
+        score = 0;
+        isCheck = true;
+        textGameOver.gameObject.SetActive(false);
+        btnRestart.gameObject.SetActive(false);
+        _player.ReSpawn();
     }
-
+    public void addSocre(Rigidbody2D rb)
+    {
+        float speed = -rb.velocity.y;
+        score += (int)speed;
+    }
 }
